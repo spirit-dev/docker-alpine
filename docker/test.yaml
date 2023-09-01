@@ -1,0 +1,23 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  labels:
+    - key: "layer"
+      value: "0"
+    - key: "from"
+      value: "scratch"
+    - key: "ssense_official"
+      value: "yes"
+    - key: "maintainer"
+      value: "devops@ssense.com"
+  cmd: ["/bin/sh"]
+
+commandTests:
+  - name: "alpine version"
+    command: "cat"
+    args: ["/etc/alpine-release"]
+    expectedOutput: ["3.*.*"]
+  - name: "apk version"
+    command: "apk"
+    args: ["-V"]
+    expectedOutput: ["apk-tools [0-9.+]+.*"]
