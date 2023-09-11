@@ -1,0 +1,811 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: runner-ez2pmn9-project-106-concurrent-0-6t7ms4x2
+  namespace: gitlab
+  labels:
+    pod: runner-ez2pmn9-project-106-concurrent-0
+  annotations:
+    job.runner.gitlab.com/before_sha: 1b3a189ead4b8867a9bc77530d4194b67ec756a4
+    job.runner.gitlab.com/id: "54"
+    job.runner.gitlab.com/name: container-build
+    job.runner.gitlab.com/ref: 1-setup-ci
+    job.runner.gitlab.com/sha: ee441e800b7570c053a7ced743e7147cbaa73db4
+    job.runner.gitlab.com/url: >-
+      https://gitlab-internal.spirit-dev.net/infrastructure/docker/alpine/-/jobs/54
+    project.runner.gitlab.com/id: "106"
+spec:
+  volumes:
+    - name: docker-certs
+      emptyDir:
+        medium: Memory
+    - name: repo
+      emptyDir: {}
+    - name: scripts
+      emptyDir: {}
+    - name: logs
+      emptyDir: {}
+    - name: kube-api-access-fg8tn
+      projected:
+        sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+          - configMap:
+              name: kube-root-ca.crt
+              items:
+                - key: ca.crt
+                  path: ca.crt
+          - downwardAPI:
+              items:
+                - path: namespace
+                  fieldRef:
+                    apiVersion: v1
+                    fieldPath: metadata.namespace
+        defaultMode: 420
+  initContainers:
+    - name: init-permissions
+      image: gitlab/gitlab-runner-helper:arm64-latest
+      command:
+        - sh
+        - "-c"
+        - >-
+          touch /logs-106-54/output.log && (chmod 777 /logs-106-54/output.log ||
+          exit 0)
+      resources: {}
+      volumeMounts:
+        - name: scripts
+          mountPath: /scripts-106-54
+        - name: logs
+          mountPath: /logs-106-54
+        - name: docker-certs
+          mountPath: /certs/client
+        - name: repo
+          mountPath: /builds
+        - name: kube-api-access-fg8tn
+          readOnly: true
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      imagePullPolicy: IfNotPresent
+      securityContext:
+        capabilities:
+          drop:
+            - NET_RAW
+        privileged: true
+  containers:
+    - name: build
+      image: docker:24.0.5
+      command:
+        - sh
+        - "-c"
+        - "if [ -x /usr/local/bin/bash ]; then\n\texec /usr/local/bin/bash \nelif [ -x /usr/bin/bash ]; then\n\texec /usr/bin/bash \nelif [ -x /bin/bash ]; then\n\texec /bin/bash \nelif [ -x /usr/local/bin/sh ]; then\n\texec /usr/local/bin/sh \nelif [ -x /usr/bin/sh ]; then\n\texec /usr/bin/sh \nelif [ -x /bin/sh ]; then\n\texec /bin/sh \nelif [ -x /busybox/sh ]; then\n\texec /busybox/sh \nelse\n\techo shell not found\n\texit 1\nfi\n\n"
+      env:
+        - name: FF_CMD_DISABLE_DELAYED_ERROR_LEVEL_EXPANSION
+          value: "false"
+        - name: FF_NETWORK_PER_BUILD
+          value: "false"
+        - name: FF_USE_LEGACY_KUBERNETES_EXECUTION_STRATEGY
+          value: "false"
+        - name: FF_USE_DIRECT_DOWNLOAD
+          value: "true"
+        - name: FF_SKIP_NOOP_BUILD_STAGES
+          value: "true"
+        - name: FF_USE_FASTZIP
+          value: "false"
+        - name: FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR
+          value: "false"
+        - name: FF_ENABLE_BASH_EXIT_CODE_CHECK
+          value: "false"
+        - name: FF_USE_WINDOWS_LEGACY_PROCESS_STRATEGY
+          value: "true"
+        - name: FF_USE_NEW_BASH_EVAL_STRATEGY
+          value: "false"
+        - name: FF_USE_POWERSHELL_PATH_RESOLVER
+          value: "false"
+        - name: FF_USE_DYNAMIC_TRACE_FORCE_SEND_INTERVAL
+          value: "false"
+        - name: FF_SCRIPT_SECTIONS
+          value: "false"
+        - name: FF_USE_NEW_SHELL_ESCAPE
+          value: "false"
+        - name: FF_ENABLE_JOB_CLEANUP
+          value: "false"
+        - name: FF_KUBERNETES_HONOR_ENTRYPOINT
+          value: "false"
+        - name: FF_POSIXLY_CORRECT_ESCAPES
+          value: "false"
+        - name: FF_USE_IMPROVED_URL_MASKING
+          value: "false"
+        - name: FF_RESOLVE_FULL_TLS_CHAIN
+          value: "true"
+        - name: FF_DISABLE_POWERSHELL_STDIN
+          value: "false"
+        - name: FF_USE_POD_ACTIVE_DEADLINE_SECONDS
+          value: "false"
+        - name: FF_USE_ADVANCED_POD_SPEC_CONFIGURATION
+          value: "false"
+        - name: FF_SET_PERMISSIONS_BEFORE_CLEANUP
+          value: "true"
+        - name: FF_SECRET_RESOLVING_FAILS_IF_MISSING
+          value: "true"
+        - name: CI_RUNNER_SHORT_TOKEN
+          value: ez2Pmn9_
+        - name: CI_BUILDS_DIR
+          value: /builds
+        - name: CI_PROJECT_DIR
+          value: /builds/infrastructure/docker/alpine
+        - name: CI_CONCURRENT_ID
+          value: "0"
+        - name: CI_CONCURRENT_PROJECT_ID
+          value: "0"
+        - name: CI_SERVER
+          value: "yes"
+        - name: CI_JOB_STATUS
+          value: running
+        - name: CI_JOB_TIMEOUT
+          value: "3600"
+        - name: CI_SERVER_TLS_CA_FILE
+          value: |-
+            -----BEGIN CERTIFICATE-----
+            MIIFCjCCA/KgAwIBAgISBFKE4kvjod1r13WZqcm5DrOcMA0GCSqGSIb3DQEBCwUA
+            MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD
+            EwJSMzAeFw0yMzA4MTgwMjM0NTRaFw0yMzExMTYwMjM0NTNaMCkxJzAlBgNVBAMT
+            HmdpdGxhYi1pbnRlcm5hbC5zcGlyaXQtZGV2Lm5ldDCCASIwDQYJKoZIhvcNAQEB
+            BQADggEPADCCAQoCggEBAKYbatWdiSzokkCsDE5qPuc+GeaTExRUzKuMSlRWtvFI
+            Kxg0Un94ryoW3NeJ9uni/emGBCyd7BT9ItHsICbzsU+moJKrRgsOhilJQmoSZDkn
+            z6sF23VJfeyKQ2K9v6Q3CN2NDqypqgJPtsMNeiWi7Y5P5cSUokLP7svHb4Qdj985
+            036E+fDiwTDqeivAYswxYC6dbnmMc7tXiHPpfXC+qQ1v9kmunZAl+1IOCr89F99C
+            zdlncdFH6h4PqsEBhHflva85im+a7t3RknHochPVCwEZrdhyFh7jBGL0XIz7Pto6
+            umZHd7uXeMy1WHvFEqDVOSoSfxvMEexCs7P6LJdZWxUCAwEAAaOCAiEwggIdMA4G
+            A1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDAYD
+            VR0TAQH/BAIwADAdBgNVHQ4EFgQUZH5eOWkQ2/01KpCDsZyl8iTTKmUwHwYDVR0j
+            BBgwFoAUFC6zF7dYVsuuUAlA5h+vnYsUwsYwVQYIKwYBBQUHAQEESTBHMCEGCCsG
+            AQUFBzABhhVodHRwOi8vcjMuby5sZW5jci5vcmcwIgYIKwYBBQUHMAKGFmh0dHA6
+            Ly9yMy5pLmxlbmNyLm9yZy8wKQYDVR0RBCIwIIIeZ2l0bGFiLWludGVybmFsLnNw
+            aXJpdC1kZXYubmV0MBMGA1UdIAQMMAowCAYGZ4EMAQIBMIIBBQYKKwYBBAHWeQIE
+            AgSB9gSB8wDxAHYAtz77JN+cTbp18jnFulj0bF38Qs96nzXEnh0JgSXttJkAAAGK
+            BrXW+wAABAMARzBFAiEAhhiVmIjZns+jq2ZoVSlc+5srkm70mCI3bM+h5Rm7nuwC
+            ICNm6GcDkkVywhED2HMlXINpytj1wM/U5oC9nkUpP0uGAHcAejKMVNi3LbYg6jjg
+            Uh7phBZwMhOFTTvSK8E6V6NS61IAAAGKBrXXcQAABAMASDBGAiEA9UTrww15nBwS
+            eechsGQ/b/IEzZpCDhiN6+X8H79vJNgCIQD5/BVox1YHRvGlOQhQpuTL41Vxygw0
+            AXoESCk/1V3eDTANBgkqhkiG9w0BAQsFAAOCAQEAF4WKKC70c89ZNgzhdkAH19Nk
+            wCMpP/1jwJlPkCwSSUIekn5zyPD5getiaSyrX7RA+0p3RgZtetx5boli8v8L0Dyf
+            4Ga72V3KyxvtEjd9H1vwxeotKaPTB8qdKhtUATTL8rvfVHkKE6OM4wn3pyS5mQl5
+            wzwNXUD8WpOOP9L+k8vn29zoWJJ/RsqCyp/XW2HIOHHHGbgqZwGUwllpH5VUkdlk
+            QKj3DpsjDwsUBKmiHrMs0ZFNR69RpSm6WDWIPqw4YTGZazx5yaB1m48O1mk/sDdS
+            qLFEbCRuMTXz9M6z+RNGpyGGnmUfVttb7M4kcTT978FKa1gVxPQRIczC4MTgRg==
+            -----END CERTIFICATE-----
+            -----BEGIN CERTIFICATE-----
+            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
+            nLRbwHOoq7hHwg==
+            -----END CERTIFICATE-----
+            -----BEGIN CERTIFICATE-----
+            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
+            -----END CERTIFICATE-----
+        - name: CI_PIPELINE_ID
+          value: "11"
+        - name: CI_PIPELINE_URL
+          value: >-
+            https://gitlab-internal.spirit-dev.net/infrastructure/docker/alpine/-/pipelines/11
+        - name: CI_JOB_ID
+          value: "54"
+        - name: CI_JOB_URL
+          value: >-
+            https://gitlab-internal.spirit-dev.net/infrastructure/docker/alpine/-/jobs/54
+        - name: CI_JOB_STARTED_AT
+          value: "2023-09-08T01:44:38Z"
+        - name: CI_REGISTRY_USER
+          value: gitlab-ci-token
+        - name: CI_JOB_NAME
+          value: container-build
+        - name: CI_JOB_NAME_SLUG
+          value: container-build
+        - name: CI_JOB_STAGE
+          value: package
+        - name: CI_NODE_TOTAL
+          value: "1"
+        - name: CI
+          value: "true"
+        - name: GITLAB_CI
+          value: "true"
+        - name: CI_SERVER_URL
+          value: https://gitlab-internal.spirit-dev.net
+        - name: CI_SERVER_HOST
+          value: gitlab-internal.spirit-dev.net
+        - name: CI_SERVER_PORT
+          value: "443"
+        - name: CI_SERVER_PROTOCOL
+          value: https
+        - name: CI_SERVER_SHELL_SSH_HOST
+          value: gitlab-internal.spirit-dev.net
+        - name: CI_SERVER_SHELL_SSH_PORT
+          value: "22"
+        - name: CI_SERVER_NAME
+          value: GitLab
+        - name: CI_SERVER_VERSION
+          value: 16.3.0-pre
+        - name: CI_SERVER_VERSION_MAJOR
+          value: "16"
+        - name: CI_SERVER_VERSION_MINOR
+          value: "3"
+        - name: CI_SERVER_VERSION_PATCH
+          value: "0"
+        - name: CI_SERVER_REVISION
+          value: aaff41e10e8
+        - name: GITLAB_FEATURES
+        - name: CI_PROJECT_ID
+          value: "106"
+        - name: CI_PROJECT_NAME
+          value: alpine
+        - name: CI_PROJECT_TITLE
+          value: alpine
+        - name: CI_PROJECT_DESCRIPTION
+        - name: CI_PROJECT_PATH
+          value: infrastructure/docker/alpine
+        - name: CI_PROJECT_PATH_SLUG
+          value: infrastructure-docker-alpine
+        - name: CI_PROJECT_NAMESPACE
+          value: infrastructure/docker
+        - name: CI_PROJECT_NAMESPACE_ID
+          value: "116"
+        - name: CI_PROJECT_ROOT_NAMESPACE
+          value: infrastructure
+        - name: CI_PROJECT_URL
+          value: https://gitlab-internal.spirit-dev.net/infrastructure/docker/alpine
+        - name: CI_PROJECT_VISIBILITY
+          value: private
+        - name: CI_PROJECT_REPOSITORY_LANGUAGES
+          value: makefile,shell,dockerfile
+        - name: CI_PROJECT_CLASSIFICATION_LABEL
+        - name: CI_DEFAULT_BRANCH
+          value: main
+        - name: CI_CONFIG_PATH
+          value: .gitlab-ci.yml
+        - name: CI_PAGES_DOMAIN
+          value: gitlab-pages-internal.spirit-dev.net
+        - name: CI_PAGES_URL
+          value: >-
+            https://infrastructure.gitlab-pages-internal.spirit-dev.net/docker/alpine
+        - name: CI_REGISTRY
+          value: gitlab-registry-internal.spirit-dev.net
+        - name: CI_REGISTRY_IMAGE
+          value: gitlab-registry-internal.spirit-dev.net/infrastructure/docker/alpine
+        - name: CI_API_V4_URL
+          value: https://gitlab-internal.spirit-dev.net/api/v4
+        - name: CI_API_GRAPHQL_URL
+          value: https://gitlab-internal.spirit-dev.net/api/graphql
+        - name: CI_TEMPLATE_REGISTRY_HOST
+          value: registry.gitlab.com
+        - name: CI_PIPELINE_IID
+          value: "4"
+        - name: CI_PIPELINE_SOURCE
+          value: push
+        - name: CI_PIPELINE_CREATED_AT
+          value: "2023-09-08T01:39:05Z"
+        - name: CI_COMMIT_SHA
+          value: ee441e800b7570c053a7ced743e7147cbaa73db4
+        - name: CI_COMMIT_SHORT_SHA
+          value: ee441e80
+        - name: CI_COMMIT_BEFORE_SHA
+          value: 1b3a189ead4b8867a9bc77530d4194b67ec756a4
+        - name: CI_COMMIT_REF_NAME
+          value: 1-setup-ci
+        - name: CI_COMMIT_REF_SLUG
+          value: 1-setup-ci
+        - name: CI_COMMIT_BRANCH
+          value: 1-setup-ci
+        - name: CI_COMMIT_MESSAGE
+          value: "feat(!1): docker cert attempt"
+        - name: CI_COMMIT_TITLE
+          value: "feat(!1): docker cert attempt"
+        - name: CI_COMMIT_DESCRIPTION
+        - name: CI_COMMIT_REF_PROTECTED
+          value: "false"
+        - name: CI_COMMIT_TIMESTAMP
+          value: "2023-09-07T21:38:55-04:00"
+        - name: CI_COMMIT_AUTHOR
+          value: Jean Bordat <bordat.jean@gmail.com>
+        - name: CI_OPEN_MERGE_REQUESTS
+          value: infrastructure/docker/alpine!1
+        - name: CI_RUNNER_ID
+          value: "10"
+        - name: CI_RUNNER_DESCRIPTION
+          value: gitlab-gitlab-runner-d4799bbcf-zpswb
+        - name: CI_RUNNER_TAGS
+          value: "[]"
+        - name: DOCKER_HOST
+          value: tcp://docker:2376
+        - name: DOCKER_TLS_CERTDIR
+          value: /certs
+        - name: DOCKER_TLS_VERIFY
+          value: "1"
+        - name: DOCKER_CERT_PATH
+          value: /certs/client
+        - name: GITLAB_USER_ID
+          value: "2"
+        - name: GITLAB_USER_EMAIL
+          value: bordat.jean@gmail.com
+        - name: GITLAB_USER_LOGIN
+          value: jbordat
+        - name: GITLAB_USER_NAME
+          value: Jean Bordat
+        - name: CI_DISPOSABLE_ENVIRONMENT
+          value: "true"
+        - name: CI_RUNNER_VERSION
+          value: 16.2.0
+        - name: CI_RUNNER_REVISION
+          value: 782e15da
+        - name: CI_RUNNER_EXECUTABLE_ARCH
+          value: linux/arm64
+        - name: RUNNER_TEMP_PROJECT_DIR
+          value: /builds/infrastructure/docker/alpine.tmp
+      resources: {}
+      volumeMounts:
+        - name: scripts
+          mountPath: /scripts-106-54
+        - name: logs
+          mountPath: /logs-106-54
+        - name: docker-certs
+          mountPath: /certs/client
+        - name: repo
+          mountPath: /builds
+        - name: kube-api-access-fg8tn
+          readOnly: true
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      imagePullPolicy: IfNotPresent
+      securityContext:
+        capabilities:
+          drop:
+            - NET_RAW
+        privileged: true
+      stdin: true
+    - name: helper
+      image: gitlab/gitlab-runner-helper:arm64-latest
+      command:
+        - sh
+        - "-c"
+        - "if [ -x /usr/local/bin/bash ]; then\n\texec /usr/local/bin/bash \nelif [ -x /usr/bin/bash ]; then\n\texec /usr/bin/bash \nelif [ -x /bin/bash ]; then\n\texec /bin/bash \nelif [ -x /usr/local/bin/sh ]; then\n\texec /usr/local/bin/sh \nelif [ -x /usr/bin/sh ]; then\n\texec /usr/bin/sh \nelif [ -x /bin/sh ]; then\n\texec /bin/sh \nelif [ -x /busybox/sh ]; then\n\texec /busybox/sh \nelse\n\techo shell not found\n\texit 1\nfi\n\n"
+      resources: {}
+      volumeMounts:
+        - name: scripts
+          mountPath: /scripts-106-54
+        - name: logs
+          mountPath: /logs-106-54
+        - name: docker-certs
+          mountPath: /certs/client
+        - name: repo
+          mountPath: /builds
+        - name: kube-api-access-fg8tn
+          readOnly: true
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      imagePullPolicy: IfNotPresent
+      securityContext:
+        capabilities:
+          drop:
+            - NET_RAW
+        privileged: true
+      stdin: true
+    - name: svc-0
+      image: docker:24.0.5-dind
+      env:
+        - name: FF_CMD_DISABLE_DELAYED_ERROR_LEVEL_EXPANSION
+          value: "false"
+        - name: FF_NETWORK_PER_BUILD
+          value: "false"
+        - name: FF_USE_LEGACY_KUBERNETES_EXECUTION_STRATEGY
+          value: "false"
+        - name: FF_USE_DIRECT_DOWNLOAD
+          value: "true"
+        - name: FF_SKIP_NOOP_BUILD_STAGES
+          value: "true"
+        - name: FF_USE_FASTZIP
+          value: "false"
+        - name: FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR
+          value: "false"
+        - name: FF_ENABLE_BASH_EXIT_CODE_CHECK
+          value: "false"
+        - name: FF_USE_WINDOWS_LEGACY_PROCESS_STRATEGY
+          value: "true"
+        - name: FF_USE_NEW_BASH_EVAL_STRATEGY
+          value: "false"
+        - name: FF_USE_POWERSHELL_PATH_RESOLVER
+          value: "false"
+        - name: FF_USE_DYNAMIC_TRACE_FORCE_SEND_INTERVAL
+          value: "false"
+        - name: FF_SCRIPT_SECTIONS
+          value: "false"
+        - name: FF_USE_NEW_SHELL_ESCAPE
+          value: "false"
+        - name: FF_ENABLE_JOB_CLEANUP
+          value: "false"
+        - name: FF_KUBERNETES_HONOR_ENTRYPOINT
+          value: "false"
+        - name: FF_POSIXLY_CORRECT_ESCAPES
+          value: "false"
+        - name: FF_USE_IMPROVED_URL_MASKING
+          value: "false"
+        - name: FF_RESOLVE_FULL_TLS_CHAIN
+          value: "true"
+        - name: FF_DISABLE_POWERSHELL_STDIN
+          value: "false"
+        - name: FF_USE_POD_ACTIVE_DEADLINE_SECONDS
+          value: "false"
+        - name: FF_USE_ADVANCED_POD_SPEC_CONFIGURATION
+          value: "false"
+        - name: FF_SET_PERMISSIONS_BEFORE_CLEANUP
+          value: "true"
+        - name: FF_SECRET_RESOLVING_FAILS_IF_MISSING
+          value: "true"
+        - name: CI_RUNNER_SHORT_TOKEN
+          value: ez2Pmn9_
+        - name: CI_BUILDS_DIR
+          value: /builds
+        - name: CI_PROJECT_DIR
+          value: /builds/infrastructure/docker/alpine
+        - name: CI_CONCURRENT_ID
+          value: "0"
+        - name: CI_CONCURRENT_PROJECT_ID
+          value: "0"
+        - name: CI_SERVER
+          value: "yes"
+        - name: CI_JOB_STATUS
+          value: running
+        - name: CI_JOB_TIMEOUT
+          value: "3600"
+        - name: CI_SERVER_TLS_CA_FILE
+          value: |-
+            -----BEGIN CERTIFICATE-----
+            MIIFCjCCA/KgAwIBAgISBFKE4kvjod1r13WZqcm5DrOcMA0GCSqGSIb3DQEBCwUA
+            MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD
+            EwJSMzAeFw0yMzA4MTgwMjM0NTRaFw0yMzExMTYwMjM0NTNaMCkxJzAlBgNVBAMT
+            HmdpdGxhYi1pbnRlcm5hbC5zcGlyaXQtZGV2Lm5ldDCCASIwDQYJKoZIhvcNAQEB
+            BQADggEPADCCAQoCggEBAKYbatWdiSzokkCsDE5qPuc+GeaTExRUzKuMSlRWtvFI
+            Kxg0Un94ryoW3NeJ9uni/emGBCyd7BT9ItHsICbzsU+moJKrRgsOhilJQmoSZDkn
+            z6sF23VJfeyKQ2K9v6Q3CN2NDqypqgJPtsMNeiWi7Y5P5cSUokLP7svHb4Qdj985
+            036E+fDiwTDqeivAYswxYC6dbnmMc7tXiHPpfXC+qQ1v9kmunZAl+1IOCr89F99C
+            zdlncdFH6h4PqsEBhHflva85im+a7t3RknHochPVCwEZrdhyFh7jBGL0XIz7Pto6
+            umZHd7uXeMy1WHvFEqDVOSoSfxvMEexCs7P6LJdZWxUCAwEAAaOCAiEwggIdMA4G
+            A1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDAYD
+            VR0TAQH/BAIwADAdBgNVHQ4EFgQUZH5eOWkQ2/01KpCDsZyl8iTTKmUwHwYDVR0j
+            BBgwFoAUFC6zF7dYVsuuUAlA5h+vnYsUwsYwVQYIKwYBBQUHAQEESTBHMCEGCCsG
+            AQUFBzABhhVodHRwOi8vcjMuby5sZW5jci5vcmcwIgYIKwYBBQUHMAKGFmh0dHA6
+            Ly9yMy5pLmxlbmNyLm9yZy8wKQYDVR0RBCIwIIIeZ2l0bGFiLWludGVybmFsLnNw
+            aXJpdC1kZXYubmV0MBMGA1UdIAQMMAowCAYGZ4EMAQIBMIIBBQYKKwYBBAHWeQIE
+            AgSB9gSB8wDxAHYAtz77JN+cTbp18jnFulj0bF38Qs96nzXEnh0JgSXttJkAAAGK
+            BrXW+wAABAMARzBFAiEAhhiVmIjZns+jq2ZoVSlc+5srkm70mCI3bM+h5Rm7nuwC
+            ICNm6GcDkkVywhED2HMlXINpytj1wM/U5oC9nkUpP0uGAHcAejKMVNi3LbYg6jjg
+            Uh7phBZwMhOFTTvSK8E6V6NS61IAAAGKBrXXcQAABAMASDBGAiEA9UTrww15nBwS
+            eechsGQ/b/IEzZpCDhiN6+X8H79vJNgCIQD5/BVox1YHRvGlOQhQpuTL41Vxygw0
+            AXoESCk/1V3eDTANBgkqhkiG9w0BAQsFAAOCAQEAF4WKKC70c89ZNgzhdkAH19Nk
+            wCMpP/1jwJlPkCwSSUIekn5zyPD5getiaSyrX7RA+0p3RgZtetx5boli8v8L0Dyf
+            4Ga72V3KyxvtEjd9H1vwxeotKaPTB8qdKhtUATTL8rvfVHkKE6OM4wn3pyS5mQl5
+            wzwNXUD8WpOOP9L+k8vn29zoWJJ/RsqCyp/XW2HIOHHHGbgqZwGUwllpH5VUkdlk
+            QKj3DpsjDwsUBKmiHrMs0ZFNR69RpSm6WDWIPqw4YTGZazx5yaB1m48O1mk/sDdS
+            qLFEbCRuMTXz9M6z+RNGpyGGnmUfVttb7M4kcTT978FKa1gVxPQRIczC4MTgRg==
+            -----END CERTIFICATE-----
+            -----BEGIN CERTIFICATE-----
+            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
+            nLRbwHOoq7hHwg==
+            -----END CERTIFICATE-----
+            -----BEGIN CERTIFICATE-----
+            MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw
+            TzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh
+            cmNoIEdyb3VwMRUwEwYDVQQDEwxJU1JHIFJvb3QgWDEwHhcNMTUwNjA0MTEwNDM4
+            WhcNMzUwNjA0MTEwNDM4WjBPMQswCQYDVQQGEwJVUzEpMCcGA1UEChMgSW50ZXJu
+            ZXQgU2VjdXJpdHkgUmVzZWFyY2ggR3JvdXAxFTATBgNVBAMTDElTUkcgUm9vdCBY
+            MTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAK3oJHP0FDfzm54rVygc
+            h77ct984kIxuPOZXoHj3dcKi/vVqbvYATyjb3miGbESTtrFj/RQSa78f0uoxmyF+
+            0TM8ukj13Xnfs7j/EvEhmkvBioZxaUpmZmyPfjxwv60pIgbz5MDmgK7iS4+3mX6U
+            A5/TR5d8mUgjU+g4rk8Kb4Mu0UlXjIB0ttov0DiNewNwIRt18jA8+o+u3dpjq+sW
+            T8KOEUt+zwvo/7V3LvSye0rgTBIlDHCNAymg4VMk7BPZ7hm/ELNKjD+Jo2FR3qyH
+            B5T0Y3HsLuJvW5iB4YlcNHlsdu87kGJ55tukmi8mxdAQ4Q7e2RCOFvu396j3x+UC
+            B5iPNgiV5+I3lg02dZ77DnKxHZu8A/lJBdiB3QW0KtZB6awBdpUKD9jf1b0SHzUv
+            KBds0pjBqAlkd25HN7rOrFleaJ1/ctaJxQZBKT5ZPt0m9STJEadao0xAH0ahmbWn
+            OlFuhjuefXKnEgV4We0+UXgVCwOPjdAvBbI+e0ocS3MFEvzG6uBQE3xDk3SzynTn
+            jh8BCNAw1FtxNrQHusEwMFxIt4I7mKZ9YIqioymCzLq9gwQbooMDQaHWBfEbwrbw
+            qHyGO0aoSCqI3Haadr8faqU9GY/rOPNk3sgrDQoo//fb4hVC1CLQJ13hef4Y53CI
+            rU7m2Ys6xt0nUW7/vGT1M0NPAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNV
+            HRMBAf8EBTADAQH/MB0GA1UdDgQWBBR5tFnme7bl5AFzgAiIyBpY9umbbjANBgkq
+            hkiG9w0BAQsFAAOCAgEAVR9YqbyyqFDQDLHYGmkgJykIrGF1XIpu+ILlaS/V9lZL
+            ubhzEFnTIZd+50xx+7LSYK05qAvqFyFWhfFQDlnrzuBZ6brJFe+GnY+EgPbk6ZGQ
+            3BebYhtF8GaV0nxvwuo77x/Py9auJ/GpsMiu/X1+mvoiBOv/2X/qkSsisRcOj/KK
+            NFtY2PwByVS5uCbMiogziUwthDyC3+6WVwW6LLv3xLfHTjuCvjHIInNzktHCgKQ5
+            ORAzI4JMPJ+GslWYHb4phowim57iaztXOoJwTdwJx4nLCgdNbOhdjsnvzqvHu7Ur
+            TkXWStAmzOVyyghqpZXjFaH3pO3JLF+l+/+sKAIuvtd7u+Nxe5AW0wdeRlN8NwdC
+            jNPElpzVmbUq4JUagEiuTDkHzsxHpFKVK7q4+63SM1N95R1NbdWhscdCb+ZAJzVc
+            oyi3B43njTOQ5yOf+1CceWxG1bQVs5ZufpsMljq4Ui0/1lvh+wjChP4kqKOJ2qxq
+            4RgqsahDYVvTH9w7jXbyLeiNdd8XM2w9U/t7y0Ff/9yi0GE44Za4rF2LN9d11TPA
+            mRGunUHBcnWEvgJBQl9nJEiU0Zsnvgc/ubhPgXRR4Xq37Z0j4r7g1SgEEzwxA57d
+            emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
+            -----END CERTIFICATE-----
+        - name: CI_PIPELINE_ID
+          value: "11"
+        - name: CI_PIPELINE_URL
+          value: >-
+            https://gitlab-internal.spirit-dev.net/infrastructure/docker/alpine/-/pipelines/11
+        - name: CI_JOB_ID
+          value: "54"
+        - name: CI_JOB_URL
+          value: >-
+            https://gitlab-internal.spirit-dev.net/infrastructure/docker/alpine/-/jobs/54
+        - name: CI_JOB_STARTED_AT
+          value: "2023-09-08T01:44:38Z"
+        - name: CI_REGISTRY_USER
+          value: gitlab-ci-token
+        - name: CI_JOB_NAME
+          value: container-build
+        - name: CI_JOB_NAME_SLUG
+          value: container-build
+        - name: CI_JOB_STAGE
+          value: package
+        - name: CI_NODE_TOTAL
+          value: "1"
+        - name: CI
+          value: "true"
+        - name: GITLAB_CI
+          value: "true"
+        - name: CI_SERVER_URL
+          value: https://gitlab-internal.spirit-dev.net
+        - name: CI_SERVER_HOST
+          value: gitlab-internal.spirit-dev.net
+        - name: CI_SERVER_PORT
+          value: "443"
+        - name: CI_SERVER_PROTOCOL
+          value: https
+        - name: CI_SERVER_SHELL_SSH_HOST
+          value: gitlab-internal.spirit-dev.net
+        - name: CI_SERVER_SHELL_SSH_PORT
+          value: "22"
+        - name: CI_SERVER_NAME
+          value: GitLab
+        - name: CI_SERVER_VERSION
+          value: 16.3.0-pre
+        - name: CI_SERVER_VERSION_MAJOR
+          value: "16"
+        - name: CI_SERVER_VERSION_MINOR
+          value: "3"
+        - name: CI_SERVER_VERSION_PATCH
+          value: "0"
+        - name: CI_SERVER_REVISION
+          value: aaff41e10e8
+        - name: GITLAB_FEATURES
+        - name: CI_PROJECT_ID
+          value: "106"
+        - name: CI_PROJECT_NAME
+          value: alpine
+        - name: CI_PROJECT_TITLE
+          value: alpine
+        - name: CI_PROJECT_DESCRIPTION
+        - name: CI_PROJECT_PATH
+          value: infrastructure/docker/alpine
+        - name: CI_PROJECT_PATH_SLUG
+          value: infrastructure-docker-alpine
+        - name: CI_PROJECT_NAMESPACE
+          value: infrastructure/docker
+        - name: CI_PROJECT_NAMESPACE_ID
+          value: "116"
+        - name: CI_PROJECT_ROOT_NAMESPACE
+          value: infrastructure
+        - name: CI_PROJECT_URL
+          value: https://gitlab-internal.spirit-dev.net/infrastructure/docker/alpine
+        - name: CI_PROJECT_VISIBILITY
+          value: private
+        - name: CI_PROJECT_REPOSITORY_LANGUAGES
+          value: makefile,shell,dockerfile
+        - name: CI_PROJECT_CLASSIFICATION_LABEL
+        - name: CI_DEFAULT_BRANCH
+          value: main
+        - name: CI_CONFIG_PATH
+          value: .gitlab-ci.yml
+        - name: CI_PAGES_DOMAIN
+          value: gitlab-pages-internal.spirit-dev.net
+        - name: CI_PAGES_URL
+          value: >-
+            https://infrastructure.gitlab-pages-internal.spirit-dev.net/docker/alpine
+        - name: CI_REGISTRY
+          value: gitlab-registry-internal.spirit-dev.net
+        - name: CI_REGISTRY_IMAGE
+          value: gitlab-registry-internal.spirit-dev.net/infrastructure/docker/alpine
+        - name: CI_API_V4_URL
+          value: https://gitlab-internal.spirit-dev.net/api/v4
+        - name: CI_API_GRAPHQL_URL
+          value: https://gitlab-internal.spirit-dev.net/api/graphql
+        - name: CI_TEMPLATE_REGISTRY_HOST
+          value: registry.gitlab.com
+        - name: CI_PIPELINE_IID
+          value: "4"
+        - name: CI_PIPELINE_SOURCE
+          value: push
+        - name: CI_PIPELINE_CREATED_AT
+          value: "2023-09-08T01:39:05Z"
+        - name: CI_COMMIT_SHA
+          value: ee441e800b7570c053a7ced743e7147cbaa73db4
+        - name: CI_COMMIT_SHORT_SHA
+          value: ee441e80
+        - name: CI_COMMIT_BEFORE_SHA
+          value: 1b3a189ead4b8867a9bc77530d4194b67ec756a4
+        - name: CI_COMMIT_REF_NAME
+          value: 1-setup-ci
+        - name: CI_COMMIT_REF_SLUG
+          value: 1-setup-ci
+        - name: CI_COMMIT_BRANCH
+          value: 1-setup-ci
+        - name: CI_COMMIT_MESSAGE
+          value: "feat(!1): docker cert attempt"
+        - name: CI_COMMIT_TITLE
+          value: "feat(!1): docker cert attempt"
+        - name: CI_COMMIT_DESCRIPTION
+        - name: CI_COMMIT_REF_PROTECTED
+          value: "false"
+        - name: CI_COMMIT_TIMESTAMP
+          value: "2023-09-07T21:38:55-04:00"
+        - name: CI_COMMIT_AUTHOR
+          value: Jean Bordat <bordat.jean@gmail.com>
+        - name: CI_OPEN_MERGE_REQUESTS
+          value: infrastructure/docker/alpine!1
+        - name: CI_RUNNER_ID
+          value: "10"
+        - name: CI_RUNNER_DESCRIPTION
+          value: gitlab-gitlab-runner-d4799bbcf-zpswb
+        - name: CI_RUNNER_TAGS
+          value: "[]"
+        - name: DOCKER_HOST
+          value: tcp://docker:2376
+        - name: DOCKER_TLS_CERTDIR
+          value: /certs
+        - name: DOCKER_TLS_VERIFY
+          value: "1"
+        - name: DOCKER_CERT_PATH
+          value: /certs/client
+        - name: GITLAB_USER_ID
+          value: "2"
+        - name: GITLAB_USER_EMAIL
+          value: bordat.jean@gmail.com
+        - name: GITLAB_USER_LOGIN
+          value: jbordat
+        - name: GITLAB_USER_NAME
+          value: Jean Bordat
+        - name: CI_DISPOSABLE_ENVIRONMENT
+          value: "true"
+        - name: CI_RUNNER_VERSION
+          value: 16.2.0
+        - name: CI_RUNNER_REVISION
+          value: 782e15da
+        - name: CI_RUNNER_EXECUTABLE_ARCH
+          value: linux/arm64
+        - name: RUNNER_TEMP_PROJECT_DIR
+          value: /builds/infrastructure/docker/alpine.tmp
+      resources: {}
+      volumeMounts:
+        - name: scripts
+          mountPath: /scripts-106-54
+        - name: logs
+          mountPath: /logs-106-54
+        - name: docker-certs
+          mountPath: /certs/client
+        - name: repo
+          mountPath: /builds
+        - name: kube-api-access-fg8tn
+          readOnly: true
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      imagePullPolicy: IfNotPresent
+      securityContext:
+        capabilities:
+          drop:
+            - NET_RAW
+        privileged: true
+      stdin: true
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 0
+  dnsPolicy: ClusterFirst
+  serviceAccountName: default
+  serviceAccount: default
+  nodeName: turing-node-3
+  securityContext: {}
+  imagePullSecrets:
+    - name: runner-ez2pmn9-project-106-concurrent-0-ep9y8sok
+  affinity: {}
+  schedulerName: default-scheduler
+  tolerations:
+    - key: node.kubernetes.io/not-ready
+      operator: Exists
+      effect: NoExecute
+      tolerationSeconds: 300
+    - key: node.kubernetes.io/unreachable
+      operator: Exists
+      effect: NoExecute
+      tolerationSeconds: 300
+  hostAliases:
+    - ip: 127.0.0.1
+      hostnames:
+        - docker
+  priority: 0
+  enableServiceLinks: true
+  preemptionPolicy: PreemptLowerPriority
