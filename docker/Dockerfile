@@ -1,6 +1,7 @@
 FROM scratch
 
-ARG alpine_version
+ARG alpine_version \
+      architecture
 
 LABEL alpine_version="${alpine_version}" \
       spiritdev_official="yes" \
@@ -10,7 +11,7 @@ LABEL alpine_version="${alpine_version}" \
 
 ENV ENV=/root/.profile
 
-ADD assets/alpine-minirootfs-${alpine_version}-x86_64.tar.gz /
+ADD assets/alpine-minirootfs-${alpine_version}-${architecture}.tar.gz /
 
 RUN apk add --no-cache bash curl bind-tools
 
