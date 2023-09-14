@@ -1,5 +1,6 @@
 echo -e "--------------------------------------------------------------------------------"
-echo -e "-- SPIRITDEV OFFICIAL IMAGE.                                                  --"
-echo -e "--                                                           alpine: <GIT_HASH> --"
+echo -e "-- ONESPAN OFFICIAL IMAGE.                                                    --"
+echo -e "--                                                 alpine:           $BUILD_HASH --"
+echo -e "--                                                                 $BUILD_DATE --"
 echo -e "-- Use with caution.                                                          --"
 echo -e "--------------------------------------------------------------------------------"
