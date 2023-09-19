@@ -1,6 +1,6 @@
 include:
   - project: templates/gitlab/container-ci
-    ref: 2-setup-pipeline-jobs-2
+    ref: main
     file: container-ci.yml
 
 .container-building-variables:
