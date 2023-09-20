@@ -29,7 +29,10 @@ publish-alpine-3.18:
   extends: .container-publish
   variables:
     <<: *container-building-variables
-    CONTAINER_REGISTRY_IMAGE_TAG: ${ALPINE_VERSION}
     ADDITIONAL_DESTINATIONS: "${CONTAINER_IMAGE_TAG} latest"
   before_script:
     - wget -O docker/assets/${MINIROOTFS_TGZ} ${MINIROOTFS_URL}${MINIROOTFS_TGZ}
+  rules:
+    - if: $CI_COMMIT_TAG
+      variables:
+        CONTAINER_REGISTRY_IMAGE_TAG: ${ALPINE_VERSION}
