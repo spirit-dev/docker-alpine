@@ -1,17 +1,18 @@
 include:
   - project: templates/gitlab/container-ci
     ref: main
-    file: container-ci.yml
+    file: container-ci-kaniko.yml
 
 .container-building-variables:
   variables: &container-building-variables
     CONTAINER_IMAGE_NAME: ${CI_PROJECT_NAME}
-    CONTAINER_IMAGE_TAG: "3.17"
     CONTAINER_IMAGE_PACKAGE: ${CONTAINER_IMAGE_NAME}-${CONTAINER_IMAGE_TAG}.tar
-
-.container-publishing-variables:
-  variables: &container-publishing-variables
-    CONTAINER_REGISTRY_IMAGE_NAME: ${CI_PROJECT_NAME}
+    ALPINE_VERSION: "3.17.5"
+    CONTAINER_IMAGE_TAG: "3.17"
+    ARCHITECTURE: "aarch64"
+    CONTAINER_BUILD_ARGS: "--build-arg alpine_version=${ALPINE_VERSION} --build-arg tag=${CONTAINER_IMAGE_TAG} --build-arg git_hash=${CI_COMMIT_SHORT_SHA} --build-arg architecture=${ARCHITECTURE}"
+    MINIROOTFS_URL: http://dl-cdn.alpinelinux.org/alpine/v${CONTAINER_IMAGE_TAG}/releases/${ARCHITECTURE}/
+    MINIROOTFS_TGZ: alpine-minirootfs-${ALPINE_VERSION}-${ARCHITECTURE}.tar.gz
 
 # BUILD
 
@@ -19,55 +20,16 @@ build-alpine-3.17:
   extends: .container-build
   variables:
     <<: *container-building-variables
-    ALPINE_VERSION: "3.17.3"
-    ARCHITECTURE: "aarch64"
-    CONTAINER_BUILD_ARGS: "--build-arg alpine_version=${ALPINE_VERSION} --build-arg tag=${CONTAINER_IMAGE_TAG} --build-arg git_hash=${CI_COMMIT_SHORT_SHA} --build-arg architecture=${ARCHITECTURE}"
-    MINIROOTFS_URL: http://dl-cdn.alpinelinux.org/alpine/v${CONTAINER_IMAGE_TAG}/releases/${ARCHITECTURE}/
-    MINIROOTFS_TGZ: alpine-minirootfs-${ALPINE_VERSION}-${ARCHITECTURE}.tar.gz
   before_script:
-    - apk add --no-cache git bash make curl
-    - curl ${MINIROOTFS_URL}${MINIROOTFS_TGZ} --output docker/assets/${MINIROOTFS_TGZ}
-
-# # SCAN
-
-# scan-security-trivy-alpine-3.17:
-#   stage: scan
-#   extends: .container-scan-security-trivy
-#   variables:
-#     <<: *container-building-variables
-
-# scan-compliance-alpine-3.17:
-#   stage: scan
-#   extends: .container-scan-compliance
-#   variables:
-#     <<: *container-building-variables
-
-# scan-security-alpine-3.17:
-#   stage: scan
-#   allow_failure: true
-#   extends: .container-scan-security
-#   variables:
-#     <<: *container-building-variables
-#     <<: *container-publishing-variables
+    - wget -O docker/assets/${MINIROOTFS_TGZ} ${MINIROOTFS_URL}${MINIROOTFS_TGZ}
 
 # PUBLISH
 
-container-publish-gitlab-alpine-3.17.3:
+publish-alpine-3.17:
   extends: .container-publish
   variables:
     <<: *container-building-variables
-    <<: *container-publishing-variables
-  rules:
-    - if: $CI_COMMIT_TAG
-      variables:
-        CONTAINER_REGISTRY_IMAGE_TAG: "3.17.3"
-
-container-publish-gitlab-alpine-3.17:
-  extends: .container-publish
-  variables:
-    <<: *container-building-variables
-    <<: *container-publishing-variables
-  rules:
-    - if: $CI_COMMIT_TAG
-      variables:
-        CONTAINER_REGISTRY_IMAGE_TAG: "3.17"
+    CONTAINER_REGISTRY_IMAGE_TAG: ${ALPINE_VERSION}
+    ADDITIONAL_DESTINATIONS: "${CONTAINER_IMAGE_TAG}"
+  before_script:
+    - wget -O docker/assets/${MINIROOTFS_TGZ} ${MINIROOTFS_URL}${MINIROOTFS_TGZ}
