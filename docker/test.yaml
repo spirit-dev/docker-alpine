@@ -6,10 +6,10 @@ metadataTest:
       value: "0"
     - key: "from"
       value: "scratch"
-    - key: "ssense_official"
+    - key: "spiritdev_official"
       value: "yes"
     - key: "maintainer"
-      value: "devops@ssense.com"
+      value: "bordat.jean@gmail.com"
   cmd: ["/bin/sh"]
 
 commandTests:
