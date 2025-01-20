@@ -7,8 +7,8 @@ include:
   variables: &container-building-variables
     CONTAINER_IMAGE_NAME: ${CI_PROJECT_NAME}
     CONTAINER_IMAGE_PACKAGE: ${CONTAINER_IMAGE_NAME}-${CONTAINER_IMAGE_TAG}.tar
-    ALPINE_VERSION: "3.18.11"
-    CONTAINER_IMAGE_TAG: "3.18"
+    ALPINE_VERSION: "3.19.6"
+    CONTAINER_IMAGE_TAG: "3.19"
     ARCHITECTURE: "aarch64"
     CONTAINER_BUILD_ARGS: "--build-arg alpine_version=${ALPINE_VERSION} --build-arg tag=${CONTAINER_IMAGE_TAG} --build-arg git_hash=${CI_COMMIT_SHORT_SHA} --build-arg architecture=${ARCHITECTURE}"
     MINIROOTFS_URL: http://dl-cdn.alpinelinux.org/alpine/v${CONTAINER_IMAGE_TAG}/releases/${ARCHITECTURE}/
@@ -16,7 +16,7 @@ include:
 
 # BUILD
 
-build-alpine-3.18:
+build-alpine-3.19:
   extends: .container-build
   variables:
     <<: *container-building-variables
@@ -25,11 +25,11 @@ build-alpine-3.18:
 
 # PUBLISH
 
-publish-alpine-3.18:
+publish-alpine-3.19:
   extends: .container-publish
   variables:
     <<: *container-building-variables
-    ADDITIONAL_DESTINATIONS: "${CONTAINER_IMAGE_TAG}"
+    ADDITIONAL_DESTINATIONS: "${CONTAINER_IMAGE_TAG} latest"
   before_script:
     - wget -O docker/assets/${MINIROOTFS_TGZ} ${MINIROOTFS_URL}${MINIROOTFS_TGZ}
   rules:
