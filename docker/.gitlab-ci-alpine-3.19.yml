@@ -29,7 +29,7 @@ publish-alpine-3.19:
   extends: .container-publish
   variables:
     <<: *container-building-variables
-    ADDITIONAL_DESTINATIONS: "${CONTAINER_IMAGE_TAG} latest"
+    ADDITIONAL_DESTINATIONS: "${CONTAINER_IMAGE_TAG}"
   before_script:
     - wget -O docker/assets/${MINIROOTFS_TGZ} ${MINIROOTFS_URL}${MINIROOTFS_TGZ}
   rules:
