@@ -1,7 +1,7 @@
 # DockerFiles
 
-[![GitLab Sync](https://img.shields.io/badge/gitlab_sync-repo-blue?style=for-the-badge&logo=gitlab)](https://gitlab-internal.spirit-dev.net/github-mirror/docker-alpine) <!-- markdownlint-disable MD041 -->
-[![GitHub Mirror](https://img.shields.io/badge/github_mirror-repo-blue?style=for-the-badge&logo=github)](https://gitlab-internal.spirit-dev.net/github-mirror/docker-alpine)
+[![GitLab Sync](https://img.shields.io/badge/gitlab_sync-docker_alpine-blue?style=for-the-badge&logo=gitlab)](https://gitlab-internal.spirit-dev.net/github-mirror/docker-alpine) <!-- markdownlint-disable MD041 -->
+[![GitHub Mirror](https://img.shields.io/badge/github_mirror-docker_alpine-blue?style=for-the-badge&logo=github)](https://github.com/spirit-dev/docker-alpine)
 
 <!--TOC-->
 
