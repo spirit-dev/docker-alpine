@@ -1,0 +1,73 @@
+repos:
+  # Some out-of-the-box hooks for pre-commit.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files # Prevent giant files from being committed.
+      - id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem
+      - id: check-json
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-executables-have-shebangs
+      - id: pretty-format-json
+      - id: no-commit-to-branch
+        args: [--branch, master, --branch, main]
+
+  # Commitlint hook for pre-commit
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.22.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies: ["@commitlint/config-conventional"]
+        # args: ["--config", ".commitlintrc.yaml"]
+      - id: commitlint
+        additional_dependencies: ["@commitlint/config-conventional"]
+
+  # A smarter Dockerfile linter that helps you build best practice Docker images
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+
+  # Markdown TOC generator
+  - repo: https://github.com/jsh9/markdown-toc-creator
+    rev: 0.0.10
+    hooks:
+      - id: markdown-toc-creator
+        args:
+          [
+            "README.md.j2",
+            "--exclude",
+            '\.git|\.tox|\.pytest_cache|README.md(?!.j2)',
+          ]
+
+  # Markdown templating
+  - repo: local
+    hooks:
+      - id: md-template
+        name: markdown templating
+        entry: python .gitlab/scripts/markdown.py
+        language: system
+        pass_filenames: false
+        args:
+          [
+            "--repo-path",
+            ".",
+            "--input",
+            "README.md.j2",
+            "--output",
+            "README.md",
+            "--type",
+            "gitlab",
+          ]
+
+  # Command Line Interface for MarkdownLint
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint
+        args: ["-f"]

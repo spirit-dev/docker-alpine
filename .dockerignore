@@ -4,8 +4,15 @@
 .envrc
 .gitlab-ci.yml
 .gitignore
+**/tsconfig.tsbuildinfo
 Dockerfile
 
 **/.vscode/
 **/.git/
 **/dist/
+**/node_modules/
+**/.terraform/
+**/terraform.tfstate
+**/terraform.tfstate.backup
+.terraform.lock.hcl
+**/source_code.zip
