@@ -41,7 +41,7 @@ This repository is dedicated to oficial images used in our differents projects /
 
 ### Os
 
-- [**Alpine**](images/os/alpine/Readme.md)
+- [**Alpine**](https://gitlab-internal.spirit-dev.net/infrastructure/docker/db-wait-redis)
 
 ## TEST
 
