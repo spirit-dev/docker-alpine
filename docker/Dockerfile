@@ -5,10 +5,10 @@ ARG alpine_version git_hash \
     architecture
 
 LABEL alpine_version="${alpine_version}" \
-    spiritdev_official="yes" \
-    layer="0" \
-    from="scratch" \
-    maintainer="bordat.jean@gmail.com"
+      spiritdev_official="yes" \
+      layer="0" \
+      from="scratch" \
+      maintainer="bordat.jean@gmail.com"
 
 ENV ENV=/root/.profile \
     BUILD_HASH=${git_hash} \
